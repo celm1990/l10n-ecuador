@@ -45,14 +45,14 @@ class WizardAbstractWithhold(models.AbstractModel):
             "Account type not supported, this must be receivable or payable"
         )
         aml_to_reconcile = invoices.line_ids.filtered(
-            lambda l: l.account_id.internal_type == account_type
+            lambda line: line.account_id.internal_type == account_type
         )
         aml_to_reconcile += withholding.line_ids.filtered(
-            lambda l: l.account_id.internal_type == account_type
+            lambda line: line.account_id.internal_type == account_type
         )
         aml_to_reconcile.reconcile()
         withholding_lines = withholding.line_ids.filtered(
-            lambda l: l.tax_repartition_line_id
+            lambda line: line.tax_repartition_line_id
         )
         withholding_lines.write({"l10n_ec_withhold_id": withholding.id})
         return True

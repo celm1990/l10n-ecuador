@@ -22,7 +22,7 @@
                     string="Add Withholding"
                     type="object"
                     class="btn-primary"
-                    attrs="{'invisible': ['|', ('payment_state', 'not in', ('not_paid', 'partial')), ('l10n_ec_withhold_active', '=', False)]}"
+                    invisible="payment_state not in ('not_paid', 'partial') or not l10n_ec_withhold_active"
                 />
             </xpath>
             <xpath expr="//button[@name='action_view_debit_notes']" position="after">
@@ -31,7 +31,7 @@
                     type="object"
                     class="oe_stat_button"
                     icon="fa-list-alt"
-                    attrs="{'invisible':[('l10n_ec_withhold_count', '=', 0)]}"
+                    invisible="l10n_ec_withhold_count == 0"
                 >
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value">
@@ -56,13 +56,13 @@
             </xpath>
 
             <xpath
-                expr="//field[@name='invoice_line_ids']//field[@name='analytic_account_id']"
-                position="before"
+                expr="//field[@name='invoice_line_ids']/tree//field[@name='account_id']"
+                position="after"
             >
                 <field
                     name="l10n_ec_tax_support"
                     force_save="1"
-                    attrs="{'column_invisible': [('parent.move_type', '!=', 'in_invoice')]}"
+                    column_invisible="parent.move_type != 'in_invoice'"
                 />
             </xpath>
 
@@ -72,8 +72,7 @@
             >
                 <field
                     name="l10n_ec_tax_support"
-                    invisible="1"
-                    attrs="{'column_invisible': [('parent.move_type', '!=', 'in_invoice')]}"
+                    invisible="parent.move_type != 'in_invoice'"
                 />
             </xpath>
         </field>
@@ -115,7 +114,7 @@
                 <span class="o_form_label">
                     <field
                         name="l10n_ec_withholding_type"
-                        attrs="{'invisible': [('l10n_latam_internal_type', '!=', 'withhold')]}"
+                        invisible="l10n_latam_internal_type != 'withhold'"
                         readonly="1"
                         nolabel="1"
                     />
@@ -133,7 +132,7 @@
                     string="Send &amp; Print"
                     class="oe_highlight"
                     data-hotkey="y"
-                    attrs="{'invisible': ['|','|',('state', '!=', 'posted'), ('l10n_latam_internal_type', '!=', 'withhold'), ('is_move_sent', '=', True)]}"
+                    invisible="state != 'posted' or l10n_latam_internal_type != 'withhold' or is_move_sent"
                 />
 
                 <button
@@ -141,7 +140,7 @@
                     type="object"
                     string="Send &amp; Print"
                     data-hotkey="y"
-                    attrs="{'invisible': ['|','|',('state', '!=', 'posted'), ('l10n_latam_internal_type', '!=', 'withhold'), ('is_move_sent', '=', False)]}"
+                    invisible="state != 'posted' or l10n_latam_internal_type != 'withhold' or not is_move_sent"
                 />
 
             </xpath>
@@ -151,7 +150,7 @@
                     widget="res_partner_many2one"
                     context="{'show_address': 1, 'default_is_company': True, 'show_vat': True}"
                     options='{"always_reload": True, "no_quick_create": True}'
-                    attrs="{'invisible': [('l10n_latam_internal_type', '!=', 'withhold')]}"
+                    invisible="l10n_latam_internal_type != 'withhold'"
                 />
             </xpath>
             <xpath
@@ -160,17 +159,17 @@
             >
                 <field
                     name="invoice_origin"
-                    attrs="{'invisible':[('l10n_latam_internal_type', '!=', 'withhold')]}"
+                    invisible="l10n_latam_internal_type != 'withhold'"
                 />
             </xpath>
             <xpath expr="//field[@name='ref']" position="after">
                 <field
                     name="l10n_ec_electronic_authorization"
-                    attrs="{'invisible':[('l10n_latam_internal_type', '!=', 'withhold')]}"
+                    invisible="l10n_latam_internal_type != 'withhold'"
                 />
                 <field
                     name="l10n_ec_xml_access_key"
-                    attrs="{'invisible':[('l10n_latam_internal_type', '!=', 'withhold')]}"
+                    invisible="l10n_latam_internal_type != 'withhold'"
                 />
             </xpath>
 
@@ -178,7 +177,7 @@
                 <page
                     id="withhold_tab"
                     string="Withhold Lines"
-                    attrs="{'invisible': [('l10n_latam_internal_type', '!=', 'withhold')]}"
+                    invisible="l10n_latam_internal_type != 'withhold'"
                 >
                     <field name="l10n_ec_withhold_line_ids" mode="tree,kanban">
                         <tree editable="bottom">

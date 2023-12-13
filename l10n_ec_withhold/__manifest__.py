@@ -5,7 +5,7 @@
     "author": "Odoo Community Association (OCA), " "Jordan Centeno, Leonardo Gómez",
     "website": "https://github.com/OCA/l10n-ecuador",
     "license": "AGPL-3",
-    "version": "15.0.1.0.0",
+    "version": "17.0.1.0.0",
     "depends": ["l10n_ec_base", "l10n_ec_account_edi"],
     "data": [
         "security/ir.model.access.csv",

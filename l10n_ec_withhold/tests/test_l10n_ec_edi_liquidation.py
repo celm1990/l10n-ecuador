@@ -1,9 +1,11 @@
 from odoo.addons.l10n_ec_account_edi.tests.test_l10n_ec_edi_liquidation import (
-    TestL10nClDte,
+    TestL10nEcPurchaseLiquidation,
 )
 
 # monkey patch for avoid errors on test because l10n_ec_tax_support is empty
-original_l10n_ec_create_form_move = TestL10nClDte._l10n_ec_create_form_move
+original_l10n_ec_create_form_move = (
+    TestL10nEcPurchaseLiquidation._l10n_ec_create_form_move
+)
 
 
 def _l10n_ec_create_form_move(
@@ -35,4 +37,4 @@ def _l10n_ec_create_form_move(
     return new_move_form
 
 
-TestL10nClDte._l10n_ec_create_form_move = _l10n_ec_create_form_move
+TestL10nEcPurchaseLiquidation._l10n_ec_create_form_move = _l10n_ec_create_form_move

@@ -60,7 +60,7 @@ class AccountMove(models.Model):
             )
             return super(AccountMove, self - withhold)._check_unique_sequence_number()
 
-        return super(AccountMove, self)._check_unique_sequence_number()
+        return super()._check_unique_sequence_number()
 
     def is_invoice(self, include_receipts=False):
         # when user print report
@@ -70,7 +70,7 @@ class AccountMove(models.Model):
             or self.env.context.get("force_edi_withhold")
         ) and self.is_withhold():
             return True
-        return super(AccountMove, self).is_invoice(include_receipts)
+        return super().is_invoice(include_receipts)
 
     @api.model
     def get_withhold_types(self):
@@ -174,13 +174,13 @@ class AccountMove(models.Model):
         return res
 
     def action_invoice_print(self):
-        res = super(AccountMove, self).action_invoice_print()
+        res = super().action_invoice_print()
         if any(move.is_withhold() for move in self):
             res["context"]["force_print_withhold"] = True
         return res
 
     def action_invoice_sent(self):
-        res = super(AccountMove, self).action_invoice_sent()
+        res = super().action_invoice_sent()
         if any(move.is_withhold() for move in self):
             res["context"]["force_print_withhold"] = True
         return res
@@ -343,7 +343,7 @@ class AccountMove(models.Model):
     @api.onchange("partner_id")
     def _onchange_partner_id(self):
         self.l10n_ec_tax_support = self._get_l10n_ec_tax_support()
-        return super(AccountMove, self)._onchange_partner_id()
+        return super()._onchange_partner_id()
 
 
 class AccountMoveLine(models.Model):

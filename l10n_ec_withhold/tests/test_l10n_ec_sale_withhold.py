@@ -13,7 +13,7 @@ class TestL10nSaleWithhold(TestL10nECEdiCommon):
     @classmethod
     def setUpClass(
         cls,
-        chart_template_ref="l10n_ec.l10n_ec_ifrs",
+        chart_template_ref="ec",
     ):
         super().setUpClass(chart_template_ref=chart_template_ref)
         cls.WizardWithhold = cls.env["l10n_ec.wizard.create.sale.withhold"]
