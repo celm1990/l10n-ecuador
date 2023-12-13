@@ -150,9 +150,7 @@ class WizardCreateSaleWithhold(models.TransientModel):
 
     def extract_document_number_from_authorization(self):
         series_number = self.electronic_authorization[24:39]
-        return "{}-{}-{}".format(
-            series_number[0:3], series_number[3:6], series_number[6:15]
-        )
+        return f"{series_number[0:3]}-{series_number[3:6]}-{series_number[6:15]}"
 
     def button_validate(self):
         """
