@@ -49,19 +49,6 @@ class AccountMove(models.Model):
         TAX_SUPPORT, string="Tax Support", help="Tax support in invoice line"
     )
 
-    @api.constrains("name", "journal_id", "state")
-    def _check_unique_sequence_number(self):
-        if (
-            self.l10n_latam_internal_type == "withhold"
-            and self.l10n_ec_journal_type == "sale"
-        ):
-            withhold = self.filtered(
-                lambda x: x.is_withhold() and x.l10n_latam_use_documents
-            )
-            return super(AccountMove, self - withhold)._check_unique_sequence_number()
-
-        return super()._check_unique_sequence_number()
-
     def is_invoice(self, include_receipts=False):
         # when user print report
         # if is withhold force print(skip exception on server)
