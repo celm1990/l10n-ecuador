@@ -95,6 +95,18 @@ class AccountMove(models.Model):
             return identification_code
         return super()._get_l10n_ec_identification_type()
 
+    def _get_l10n_latam_documents_domain(self):
+        # support to withholding
+        if (
+            self.company_id.account_fiscal_country_id.code == "EC"
+            and self.is_withhold()
+        ):
+            return [
+                ("country_id.code", "=", "EC"),
+                ("internal_type", "=", "withhold"),
+            ]
+        return super()._get_l10n_latam_documents_domain()
+
     def _post(self, soft=True):
         # OVERRIDE
         # Set the electronic document to be posted and post immediately for synchronous formats.

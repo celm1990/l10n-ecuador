@@ -35,6 +35,9 @@ class WizardCreateSaleWithhold(models.TransientModel):
             )
         defaults["invoice_ids"] = [(6, 0, invoices.ids)]
         defaults["partner_id"] = invoices.partner_id.id
+        if len(invoices) == 1:
+            defaults["invoice_id"] = invoices.id
+            defaults["issue_date"] = invoices.invoice_date
         return defaults
 
     @api.depends("withhold_line_ids.withhold_amount")
@@ -188,7 +191,9 @@ class WizardCreateSaleWithhold(models.TransientModel):
         new_withholding.action_post()
         invoices = self.withhold_line_ids.invoice_id
         invoices.write({"l10n_ec_withhold_ids": [(4, new_withholding.id)]})
-        self._try_reconcile_withholding_moves(new_withholding, invoices, "receivable")
+        self._try_reconcile_withholding_moves(
+            new_withholding, invoices, "asset_receivable"
+        )
         return True
 
 

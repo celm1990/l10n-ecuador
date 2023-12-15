@@ -12,7 +12,7 @@
                         <field
                             name="journal_id"
                             required="1"
-                            domain="[('type', '=', 'purchase')]"
+                            domain="[('type', '=', 'general'), ('l10n_ec_withholding_type', '=', 'purchase')]"
                             options="{'no_create': True}"
                         />
                         <field name="document_number" />
@@ -32,19 +32,23 @@
                                     invisible="1"
                                     options="{'no_create': True}"
                                 />
-                                    <field name="l10n_ec_tax_support" required="1" />
-                                    <field
+                                        <field
+                                    name="l10n_ec_tax_support"
+                                    required="1"
+                                />
+                                        <field
                                     name="tax_group_withhold_id"
                                     required="1"
                                     options="{'no_create': True}"
+                                    domain="[('l10n_ec_type', 'in', ['withhold_vat_purchase', 'withhold_income_purchase'])]"
                                 />
-                                    <field
+                                        <field
                                     name="tax_withhold_id"
                                     required="1"
                                     options="{'no_create': True}"
-                                    domain="[('tax_group_id', '=', tax_group_withhold_id), ('type_tax_use', '=', 'purchase')]"
+                                    domain="[('tax_group_id', '=', tax_group_withhold_id), ('type_tax_use', '=', 'none')]"
                                 />
-                                    <field
+                                        <field
                                     name="base_amount"
                                     readonly="0"
                                     force_save="1"

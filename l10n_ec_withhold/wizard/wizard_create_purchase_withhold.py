@@ -65,7 +65,9 @@ class WizardCreatePurchaseWithhold(models.TransientModel):
         new_withholding.post()
         invoices = self.withhold_line_ids.invoice_id
         invoices.write({"l10n_ec_withhold_ids": [(4, new_withholding.id)]})
-        self._try_reconcile_withholding_moves(new_withholding, invoices, "payable")
+        self._try_reconcile_withholding_moves(
+            new_withholding, invoices, "liability_payable"
+        )
         return True
 
 
@@ -99,7 +101,10 @@ class WizardPurchaseWithholdLine(models.TransientModel):
                     or line.invoice_id.l10n_ec_tax_support
                 )
                 if l10n_ec_tax_support == line.l10n_ec_tax_support:
-                    if line.tax_group_withhold_id.l10n_ec_type == "withhold_income_tax":
+                    if (
+                        line.tax_group_withhold_id.l10n_ec_type
+                        == "withhold_income_purchase"
+                    ):
                         base_amount += abs(invoice_line.price_subtotal)
                     elif line.tax_group_withhold_id.l10n_ec_type == "withhold_vat":
                         base_amount += abs(

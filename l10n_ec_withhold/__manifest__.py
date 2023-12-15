@@ -9,11 +9,11 @@
     "depends": ["l10n_ec_base", "l10n_ec_account_edi"],
     "data": [
         "security/ir.model.access.csv",
-        "data/l10n_latam.document.type.csv",
         "data/edi_withhold.xml",
         "wizard/wizard_create_sale_withhold_view.xml",
         "wizard/wizard_create_purchase_withhold_view.xml",
         "views/res_partner_view.xml",
+        "views/account_journal_view.xml",
         "views/account_move_view.xml",
         "views/account_fiscal_position_view.xml",
         "views/menu_root.xml",

@@ -181,8 +181,7 @@
                 >
                     <field name="l10n_ec_withhold_line_ids" mode="tree,kanban">
                         <tree editable="bottom">
-<!--                            add new field invoice-->
-                            <field name="company_id" invisible='1' />
+                            <field name="company_id" column_invisible='1' />
                             <field name="l10n_ec_invoice_withhold_id" />
                             <field name="l10n_ec_tax_support" />
                             <field name="tax_line_id" />

@@ -12,7 +12,7 @@
                         <field
                             name="journal_id"
                             required="1"
-                            domain="[('type', '=', 'sale')]"
+                            domain="[('type', '=', 'general'), ('l10n_ec_withholding_type', '=', 'sale')]"
                             options="{'no_create': True}"
                         />
                         <field name="document_number" />
@@ -23,23 +23,28 @@
                 </group>
                 <notebook>
                         <page name="withhold_lines" string="Lines">
-                            <field name="withhold_line_ids" colspan="4">
+                            <field
+                            name="withhold_line_ids"
+                            colspan="4"
+                            context="{'default_invoice_id': invoice_id}"
+                        >
                                 <tree editable="bottom">
                                     <field
                                     name="invoice_id"
                                     domain="[('id', 'in', parent.invoice_ids)]"
                                     options="{'no_create': True}"
                                 />
-                                    <field
+                                        <field
                                     name="tax_group_withhold_id"
                                     required="1"
                                     options="{'no_create': True}"
+                                    domain="[('l10n_ec_type', 'in', ['withhold_vat_sale', 'withhold_income_sale'])]"
                                 />
-                                    <field
+                                        <field
                                     name="tax_withhold_id"
                                     required="1"
                                     options="{'no_create': True}"
-                                    domain="[('tax_group_id', '=', tax_group_withhold_id), ('type_tax_use', '=', 'sale')]"
+                                    domain="[('tax_group_id', '=', tax_group_withhold_id), ('type_tax_use', '=', 'none')]"
                                 />
                                     <field name="base_amount" force_save="1" />
                                     <field name="withhold_amount" />

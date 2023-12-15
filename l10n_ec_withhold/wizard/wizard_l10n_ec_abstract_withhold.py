@@ -31,24 +31,23 @@ class WizardAbstractWithhold(models.AbstractModel):
     def _prepare_withholding_vals(self):
         return {
             "journal_id": self.journal_id.id,
-            "name": "RET " + self.document_number,
             "ref": "RET " + self.document_number,
             "date": self.issue_date,
             "l10n_ec_electronic_authorization": self.electronic_authorization,
             "move_type": "entry",
-            "l10n_latam_document_type_id": self.env.ref("l10n_ec_withhold.ec_dt_07").id,
+            "l10n_latam_document_type_id": self.env.ref("l10n_ec.ec_dt_07").id,
             "partner_id": self.partner_id.id,
         }
 
     def _try_reconcile_withholding_moves(self, withholding, invoices, account_type):
-        assert account_type in ["receivable", "payable"], _(
+        assert account_type in ["asset_receivable", "liability_payable"], _(
             "Account type not supported, this must be receivable or payable"
         )
         aml_to_reconcile = invoices.line_ids.filtered(
-            lambda line: line.account_id.internal_type == account_type
+            lambda line: line.account_id.account_type == account_type
         )
         aml_to_reconcile += withholding.line_ids.filtered(
-            lambda line: line.account_id.internal_type == account_type
+            lambda line: line.account_id.account_type == account_type
         )
         aml_to_reconcile.reconcile()
         withholding_lines = withholding.line_ids.filtered(
@@ -65,7 +64,6 @@ class WizardAbstractWithholdLine(models.AbstractModel):
     tax_group_withhold_id = fields.Many2one(
         comodel_name="account.tax.group",
         string="Withholding Type",
-        domain="[('l10n_ec_type', 'in', ['withhold_vat', 'withhold_income_tax'])]",
     )
     tax_withhold_id = fields.Many2one(
         comodel_name="account.tax",
@@ -82,9 +80,15 @@ class WizardAbstractWithholdLine(models.AbstractModel):
     @api.onchange("invoice_id", "tax_group_withhold_id")
     def _onchange_withholding_base(self):
         for line in self:
-            if line.tax_group_withhold_id.l10n_ec_type == "withhold_income_tax":
+            if line.tax_group_withhold_id.l10n_ec_type in [
+                "withhold_income_sale",
+                "withhold_income_purchase",
+            ]:
                 line.base_amount = abs(line.invoice_id.amount_untaxed_signed)
-            elif line.tax_group_withhold_id.l10n_ec_type == "withhold_vat":
+            elif line.tax_group_withhold_id.l10n_ec_type in [
+                "withhold_vat_sale",
+                "withhold_vat_purchase",
+            ]:
                 line.base_amount = abs(line.invoice_id.amount_tax_signed)
 
     @api.depends("invoice_id", "tax_withhold_id", "base_amount")

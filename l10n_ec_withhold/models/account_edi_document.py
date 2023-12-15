@@ -47,7 +47,7 @@ class AccountEdiDocument(models.Model):
             "obligadoContabilidad": self._l10n_ec_get_required_accounting(
                 company.partner_id.property_account_position_id
             ),
-            "tipoIdSujetoRetenido": type_id,
+            "tipoIdentificacionSujetoRetenido": type_id,
             "tipoSujetoRetenido": self._l10n_ec_get_type_suject_withholding(type_id),
             "parteRel": "NO",
             "razonSocialSujetoRetenido": self._l10n_ec_clean_str(
@@ -77,7 +77,7 @@ class AccountEdiDocument(models.Model):
             rate = tax.amount
             tax_code = tax.l10n_ec_xml_fe_code
             # profit withhold take from l10n_ec_code_base
-            if tax.tax_group_id.l10n_ec_type == "withhold_income_tax":
+            if tax.tax_group_id.l10n_ec_type == "withhold_income_purchase":
                 tax_code = tax.l10n_ec_code_base
             tax_vals = {
                 "codigo": tax.tax_group_id.l10n_ec_xml_fe_code,
