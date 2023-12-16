@@ -2,6 +2,7 @@
     "name": "Electronic Withholding Ecuadorian Localization",
     "summary": "Electronic Withholding adapted Ecuadorian localization",
     "category": "Account",
+    "countries": ["ec"],
     "author": "Odoo Community Association (OCA), " "Jordan Centeno, Leonardo Gómez",
     "website": "https://github.com/OCA/l10n-ecuador",
     "license": "AGPL-3",
@@ -22,4 +23,5 @@
     ],
     "installable": True,
     "auto_install": False,
+    "post_init_hook": "_10n_ec_withhold_post_init",
 }
