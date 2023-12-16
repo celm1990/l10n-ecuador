@@ -30,3 +30,23 @@ class AccountJournal(models.Model):
         for journal in self.filtered(lambda j: j.country_code == "EC"):
             if journal.l10n_ec_withholding_type == "purchase":
                 journal.l10n_ec_require_emission = True
+
+    @api.depends(
+        "type",
+        "company_id",
+        "company_id.account_fiscal_country_id",
+        "l10n_ec_withholding_type",
+    )
+    def _compute_compatible_edi_ids(self):
+        # add l10n_ec_withholding_type to depends
+        return super()._compute_compatible_edi_ids()
+
+    @api.depends(
+        "type",
+        "company_id",
+        "company_id.account_fiscal_country_id",
+        "l10n_ec_withholding_type",
+    )
+    def _compute_edi_format_ids(self):
+        # add l10n_ec_withholding_type to depends
+        return super()._compute_edi_format_ids()

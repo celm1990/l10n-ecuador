@@ -29,7 +29,7 @@
                                 <tree editable="bottom">
                                     <field
                                     name="invoice_id"
-                                    invisible="1"
+                                    column_invisible="1"
                                     options="{'no_create': True}"
                                 />
                                         <field

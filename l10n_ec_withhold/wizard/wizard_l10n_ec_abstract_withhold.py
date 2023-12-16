@@ -31,7 +31,7 @@ class WizardAbstractWithhold(models.AbstractModel):
     def _prepare_withholding_vals(self):
         return {
             "journal_id": self.journal_id.id,
-            "ref": "RET " + self.document_number,
+            "ref": self.document_number,
             "date": self.issue_date,
             "l10n_ec_electronic_authorization": self.electronic_authorization,
             "move_type": "entry",
@@ -135,9 +135,9 @@ class WizardAbstractWithholdLine(models.AbstractModel):
     def _prepare_basis_vals(self, wizard, tax_data):
         debit = credit = 0.0
         if self.invoice_id.move_type == "out_invoice":
-            debit = abs(tax_data.get("base"))
-        if self.invoice_id.move_type == "in_invoice":
             credit = abs(tax_data.get("base"))
+        if self.invoice_id.move_type == "in_invoice":
+            debit = abs(tax_data.get("base"))
         return {
             "partner_id": wizard.partner_id.id,
             "quantity": 1.0,
@@ -153,9 +153,9 @@ class WizardAbstractWithholdLine(models.AbstractModel):
     def _prepare_basis_counterpart_vals(self, wizard, tax_data):
         debit = credit = 0.0
         if self.invoice_id.move_type == "out_invoice":
-            credit = abs(tax_data.get("base"))
-        if self.invoice_id.move_type == "in_invoice":
             debit = abs(tax_data.get("base"))
+        if self.invoice_id.move_type == "in_invoice":
+            credit = abs(tax_data.get("base"))
         return {
             "partner_id": wizard.partner_id.id,
             "quantity": 1.0,

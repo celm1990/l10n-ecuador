@@ -112,7 +112,6 @@ class AccountMove(models.Model):
         # Set the electronic document to be posted and post immediately for synchronous formats.
         # only for purchase withhold
         posted = super()._post(soft=soft)
-        edi_document_vals_list = []
         for move in posted:
             # check if tax support is set into any invoice line or invoice
             if move.is_purchase_document() and move.l10n_ec_withhold_active:
@@ -127,40 +126,6 @@ class AccountMove(models.Model):
                         )
                         % (move.display_name)
                     )
-            for edi_format in move.journal_id.edi_format_ids:
-                if (
-                    not move.is_purchase_withhold()
-                    or edi_format.code != "l10n_ec_format_sri"
-                ):
-                    continue
-                errors = edi_format._check_move_configuration(move)
-                if errors:
-                    raise UserError(
-                        _("Invalid invoice configuration:\n\n%s") % "\n".join(errors)
-                    )
-                existing_edi_document = move.edi_document_ids.filtered(
-                    lambda x: x.edi_format_id == edi_format
-                )
-                if existing_edi_document:
-                    existing_edi_document.write(
-                        {
-                            "state": "to_send",
-                            "attachment_id": False,
-                        }
-                    )
-                else:
-                    edi_document_vals_list.append(
-                        {
-                            "edi_format_id": edi_format.id,
-                            "move_id": move.id,
-                            "state": "to_send",
-                        }
-                    )
-
-        if edi_document_vals_list:
-            self.env["account.edi.document"].create(edi_document_vals_list)
-            posted.edi_document_ids._process_documents_no_web_services()
-            self.env.ref("account_edi.ir_cron_edi_network")._trigger()
         return posted
 
     def button_cancel(self):

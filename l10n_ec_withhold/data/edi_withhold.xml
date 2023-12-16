@@ -10,7 +10,9 @@
                     <contribuyenteEspecial t-out="contribuyenteEspecial" />
                 </t>
                 <obligadoContabilidad t-out="obligadoContabilidad" />
-                <tipoIdentificacionSujetoRetenido t-out="tipoIdSujetoRetenido" />
+                <tipoIdentificacionSujetoRetenido
+                    t-out="tipoIdentificacionSujetoRetenido"
+                />
                 <t t-if="tipoSujetoRetenido">
                     <tipoSujetoRetenido t-out="tipoSujetoRetenido" />
                 </t>

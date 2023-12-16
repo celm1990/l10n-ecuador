@@ -10,13 +10,6 @@ EDI_DATE_FORMAT = "%d/%m/%Y"
 class AccountEdiDocument(models.Model):
     _inherit = "account.edi.document"
 
-    def _prepare_jobs(self):
-        # pass context for force edi for witholding
-        # because Odoo server only process EDI when is_invoice() return True
-        return super(
-            AccountEdiDocument, self.with_context(force_edi_withhold=True)
-        )._prepare_jobs()
-
     def _l10n_ec_get_xsd_filename(self):
         if self.move_id.is_purchase_withhold():
             base_path = path.join("l10n_ec_account_edi", "data", "xsd")
@@ -31,6 +24,14 @@ class AccountEdiDocument(models.Model):
                 "l10n_ec_withhold.ec_edi_withhold", self._l10n_ec_get_info_withhold()
             )
         return super()._l10n_ec_render_xml_edi()
+
+    def _l10n_ec_get_edi_number(self):
+        edi_number = super()._l10n_ec_get_edi_number()
+        # withholding save number in field 'ref'
+        document = self.l10n_ec_get_current_document()
+        if document.is_purchase_withhold():
+            edi_number = document.ref
+        return edi_number
 
     def _l10n_ec_get_info_withhold(self):
         self.ensure_one()
