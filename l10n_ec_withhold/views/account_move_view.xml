@@ -46,7 +46,7 @@
                 <field name="l10n_ec_withhold_active" invisible="1" />
             </xpath>
             <xpath expr="//group[@id='header_right_group']" position="inside">
-                <field name='l10n_ec_tax_support' />
+                <field name='l10n_ec_tax_support' readonly="state != 'draft'" />
             </xpath>
             <xpath
                 expr="//field[@name='line_ids']//field[@name='name']"
@@ -54,7 +54,6 @@
             >
                 <field name='l10n_ec_tax_support' force_save="1" optional='hidden' />
             </xpath>
-
             <xpath
                 expr="//field[@name='invoice_line_ids']/tree//field[@name='account_id']"
                 position="after"
@@ -65,7 +64,6 @@
                     column_invisible="parent.move_type != 'in_invoice'"
                 />
             </xpath>
-
             <xpath
                 expr="//field[@name='invoice_line_ids']/form//field[@name='account_id']"
                 position="after"
@@ -97,9 +95,14 @@
     <record id="view_account_move_withhold_form" model="ir.ui.view">
         <field name="name">account.move.form.withhold</field>
         <field name="model">account.move</field>
-        <field name="inherit_id" ref="account.view_move_form" />
+        <field name="inherit_id" ref="l10n_ec_account_edi.view_move_form" />
         <field name="mode">primary</field>
+        <field name="priority" eval="50" />
         <field name="arch" type="xml">
+            <xpath expr="/form" position="attributes">
+                <attribute name="create">0</attribute>
+                <attribute name="delete">0</attribute>
+            </xpath>
             <xpath expr="//field[@name='fiscal_position_id']" position="before">
                 <field name="l10n_ec_withholding_type" invisible="1" />
                 <field name="is_move_sent" invisible="1" />
@@ -120,52 +123,43 @@
                     />
                 </span>
             </xpath>
-
-
-            <xpath
-                expr="//header/button[@name='action_invoice_sent']"
-                position="before"
-            >
-                <button
-                    name="action_invoice_sent"
-                    type="object"
-                    string="Send &amp; Print"
-                    class="oe_highlight"
-                    data-hotkey="y"
-                    invisible="state != 'posted' or l10n_latam_internal_type != 'withhold' or is_move_sent"
-                />
-
-                <button
-                    name="action_invoice_sent"
-                    type="object"
-                    string="Send &amp; Print"
-                    data-hotkey="y"
-                    invisible="state != 'posted' or l10n_latam_internal_type != 'withhold' or not is_move_sent"
-                />
-
+            <xpath expr="//button[@name='action_invoice_sent']" position="attributes">
+                <attribute
+                    name="invisible"
+                >state != 'posted' or is_being_sent or invoice_pdf_report_id</attribute>
             </xpath>
-            <xpath expr="//field[@name='ref']" position="before">
-                <field
-                    name="partner_id"
-                    widget="res_partner_many2one"
-                    context="{'show_address': 1, 'default_is_company': True, 'show_vat': True}"
-                    options='{"always_reload": True, "no_quick_create": True}'
-                    invisible="l10n_latam_internal_type != 'withhold'"
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <label
+                    for="partner_id"
+                    string="Customer"
+                    style="font-weight:bold;"
+                    invisible="l10n_ec_withholding_type != 'sale'"
+                />
+                <label
+                    for="partner_id"
+                    string="Vendor"
+                    style="font-weight:bold;"
+                    invisible="l10n_ec_withholding_type != 'purchase'"
                 />
             </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
             <xpath
-                expr="//group[@id='header_right_group']//field[@name='date']"
-                position="after"
+                expr="//field[@name='l10n_ec_electronic_authorization']"
+                position="attributes"
             >
-                <field
-                    name="invoice_origin"
-                    invisible="l10n_latam_internal_type != 'withhold'"
-                />
+                <attribute name="invisible">True</attribute>
+                <attribute name="required">False</attribute>
+            </xpath>
+            <xpath expr="//field[@name='ref'][last()]" position="attributes">
+                <attribute name="readonly">state != 'draft'</attribute>
             </xpath>
             <xpath expr="//field[@name='ref']" position="after">
                 <field
                     name="l10n_ec_electronic_authorization"
                     invisible="l10n_latam_internal_type != 'withhold'"
+                    readonly="state != 'draft'"
                 />
                 <field
                     name="l10n_ec_xml_access_key"
