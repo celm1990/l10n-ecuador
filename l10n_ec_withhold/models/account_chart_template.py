@@ -16,9 +16,11 @@ class AccountChartTemplate(models.AbstractModel):
         all_companies = self.env["res.company"].search([("chart_template", "=", "ec")])
         for company in all_companies:
             Template = self.with_company(company)
-            Template._load_data({"account.journal": self._get_ec_new_account_journal()})
+            Template._load_data(
+                {"account.journal": self._get_ec_new_account_journal_withhold()}
+            )
         return True
 
     @template("ec", "account.journal")
-    def _get_ec_new_account_journal(self):
+    def _get_ec_new_account_journal_withhold(self):
         return self._parse_csv("ec", "account.journal", module="l10n_ec_withhold")

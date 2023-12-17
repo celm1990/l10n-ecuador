@@ -20,24 +20,10 @@ class TestL10nSaleWithhold(TestL10nECEdiCommon):
         cls.position_no_withhold = cls.env["account.fiscal.position"].create(
             {"name": "Withhold", "l10n_ec_avoid_withhold": True}
         )
-
-    def get_tax_group_and_taxes(self):
-        """
-        search tax groups and tax
-        """
-        tax_group = self.env["account.tax.group"].search(
-            [("l10n_ec_type", "=", "withhold_vat")]
+        cls.chart_template = cls.env["account.chart.template"].with_company(cls.company)
+        cls.tax_sale_withhold_vat_100 = cls.chart_template.ref(
+            "tax_sale_withhold_vat_100"
         )
-        tax = self.env["account.tax"].search(
-            [
-                ("company_id", "=", self.company.id),
-                ("tax_group_id", "=", tax_group.id),
-                ("type_tax_use", "=", "sale"),
-                ("amount", "=", -100),
-            ],
-            limit=1,
-        )
-        return tax_group, tax
 
     @patch_service_sri
     def get_invoice(self, partner):
@@ -61,11 +47,10 @@ class TestL10nSaleWithhold(TestL10nECEdiCommon):
         wizard.electronic_authorization = electronic_authorization
         wizard.document_number = new_document_number
         if add_line:
-            tax_group, taxes = self.get_tax_group_and_taxes()
             with wizard.withhold_line_ids.new() as line:
                 line.invoice_id = invoice
-                line.tax_group_withhold_id = tax_group
-                line.tax_withhold_id = taxes
+                line.tax_group_withhold_id = self.tax_sale_withhold_vat_100.tax_group_id
+                line.tax_withhold_id = self.tax_sale_withhold_vat_100
         return wizard
 
     def test_l10n_ec_save_sale_withhold(self):
@@ -157,11 +142,10 @@ class TestL10nSaleWithhold(TestL10nECEdiCommon):
         wizard = self._prepare_new_wizard_withhold(
             invoices, "1-1-1", "1111111111", add_line=False
         )
-        tax_group, taxes = self.get_tax_group_and_taxes()
         with wizard.withhold_line_ids.new() as line:
             line.invoice_id = invoice1
-            line.tax_group_withhold_id = tax_group
-            line.tax_withhold_id = taxes
+            line.tax_group_withhold_id = self.tax_sale_withhold_vat_100.tax_group_id
+            line.tax_withhold_id = self.tax_sale_withhold_vat_100
         with self.assertRaises(UserError):
             wizard.save().button_validate()
 
